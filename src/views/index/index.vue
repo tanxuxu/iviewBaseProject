@@ -19,19 +19,26 @@
     import api from "../../libs/api";
     export default {
         mounted(){
-          this.getImage();
+          this.getImage(1);
+          window.addEventListener('scroll', this.handleScroll)
         },
         data(){
           return {
-            listData:[]
+            listData:[],
+            page:1
           }
         },
         methods: {
-          getImage: function(){
+          handleScroll: function(e){
+            if(document.documentElement.scrollTop + window.innerHeight >= document.documentElement.offsetHeight){
+              this.getImage(this.page++);
+            }
+          },
+          getImage: function(page){
               let _this = this;
-              api.getMeizi()
+              api.getMeizi(page)
               .then(function(res){
-                  _this.listData = res.results;
+                  _this.listData = _this.listData.concat(res.results);
               })
               .catch(function(res){
                 console.log(res);
@@ -41,6 +48,9 @@
     };
 </script>
 <style scoped lang="less">
+  .index{
+    background: #eee;
+  }
   .index li{
     img{
       max-width: 100%;
@@ -53,13 +63,14 @@
       -moz-column-gap: 1em;
     -webkit-column-gap: 1em;
     column-gap: 1em;
+    margin-top: 10px;
     li{
       padding: 1em;
       margin: 0 0 1em 0;
       -moz-page-break-inside: avoid;
       -webkit-column-break-inside: avoid;
       break-inside: avoid;
-     border: 1px solid #000;
+      background: #fff;
     }
   }
 </style>
